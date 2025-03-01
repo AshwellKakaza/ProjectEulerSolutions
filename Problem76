@@ -1,69 +1,72 @@
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.*;
-import java.util.stream.Stream;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
-public class Main {
 
-    public static void main(String[] args) throws IOException {
-       int summationsCount =  printSummations(100);
+public class PartitionTest {
 
-        System.out.println("count : " + summationsCount);
+    public static void main(String[] args){
+        System.out.println("count is : " + printSummations(100));
     }
 
     static int  printSummations(int n){
-        List<Integer> summationList = new ArrayList<>();
+
+        int [] summationList = new int [n];
 
         int count = 1;
 
-        summationList.add(n-1);
+        summationList [0] = n-1;
 
-        summationList.add(1);
+        summationList [1] = 1;
 
-        System.out.println(summationList);
+        int size = 2;
 
-        while(summationList.get(0)>1){
-            int lastIndex= summationList.size()-1;
+        //System.out.println(Arrays.toString(summationList));
 
-            if(summationList.get(lastIndex)==1){
+        while(summationList[0]>1){
+            int lastIndex= size-1;
+
+            if(summationList[lastIndex]==1){
                 int partialSum = 1;
                 int onesIndex = lastIndex-1;
-                while(summationList.get(onesIndex)==1){
-                    partialSum+=1;
+                while(summationList[onesIndex]==1 || summationList[onesIndex]==0){
+                    partialSum+=summationList[onesIndex];
                     onesIndex--;
                 }
 
-                int firstNonOneFromLeft = summationList.get(onesIndex);
+                int firstNonOneFromRight = summationList[onesIndex];
 
-                partialSum+=(firstNonOneFromLeft);
+                partialSum+=(firstNonOneFromRight);
 
-                int quot = partialSum/(firstNonOneFromLeft-1);
+                int quot = partialSum/(firstNonOneFromRight-1);
 
-                int rem = partialSum%(firstNonOneFromLeft-1);
+                int rem = partialSum%(firstNonOneFromRight-1);
 
-                summationList =  new ArrayList<Integer>(summationList.subList(0,onesIndex));
-
-                for(int i=0; i<quot; i++){
-                    summationList.add(firstNonOneFromLeft-1);
+                for(int i=onesIndex; i<n; i++ ){
+                    summationList[i]=0;
                 }
+                for(int i=0; i<quot; i++){
+                    summationList[onesIndex++]=firstNonOneFromRight-1;
+                }
+                size = onesIndex;
 
                 if(rem>0){
-                    summationList.add(rem);
+                    summationList[onesIndex] = rem;
+                    size = onesIndex + 1 ;
                 }
 
+
             }else{
-                summationList.set(lastIndex, summationList.get(lastIndex) -1);
-                summationList.add(1);
+
+                summationList [lastIndex] = summationList [lastIndex] -1;
+                summationList [lastIndex+1] = 1;
+
+                size = lastIndex+2;
+
             }
 
-            count++;
-            //System.out.println(summationList);
+            count ++;
         }
         return count;
     }
+
+
 
 }
