@@ -1,0 +1,113 @@
+import java.io.IOException;
+import java.util.*;
+import java.util.stream.Stream;
+
+public class Main {
+
+    static int [] prime_sieve = new int [102];
+
+    public static void main(String[] args) throws IOException {
+
+        populateSieve();
+
+        int number=2;
+        int primeSummationsCount =  0;
+
+       while (primeSummationsCount <= 5000){
+           primeSummationsCount = printSummations(++number);
+       }
+        System.out.println("count : " + primeSummationsCount);
+
+        System.out.println("number : " + number);
+
+    }
+
+    static int  printSummations(int n){
+
+        int [] summationList = new int [n];
+
+        int count = 1;
+
+        summationList [0] = n-1;
+
+        summationList [1] = 1;
+
+        int size = 2;
+
+        //System.out.println(Arrays.toString(summationList));
+
+        while(summationList[0]>1){
+            int lastIndex= size-1;
+
+            if(summationList[lastIndex]==1){
+                int partialSum = 1;
+                int onesIndex = lastIndex-1;
+                while(summationList[onesIndex]==1 || summationList[onesIndex]==0){
+                    partialSum+=summationList[onesIndex];
+                    onesIndex--;
+                }
+
+                int firstNonOneFromRight = summationList[onesIndex];
+
+                partialSum+=(firstNonOneFromRight);
+
+                int quot = partialSum/(firstNonOneFromRight-1);
+
+                int rem = partialSum%(firstNonOneFromRight-1);
+
+                for(int i=onesIndex; i<n; i++ ){
+                    summationList[i]=0;
+                }
+                for(int i=0; i<quot; i++){
+                    summationList[onesIndex++]=firstNonOneFromRight-1;
+                }
+                size = onesIndex;
+
+                if(rem>0){
+                    summationList[onesIndex] = rem;
+                    size = onesIndex + 1 ;
+                }
+
+
+            }else{
+
+                summationList [lastIndex] = summationList [lastIndex] -1;
+                summationList [lastIndex+1] = 1;
+
+                size = lastIndex+2;
+
+            }
+
+
+          if(doesListContainNonPrime(summationList)) {
+                count++;
+            }
+
+            //System.out.println(Arrays.toString(summationList));
+            //count ++;
+        }
+        return count;
+    }
+
+
+   static  boolean doesListContainNonPrime(int [] arr){
+       return !Arrays.stream(arr).filter(i-> !isPrime(i)).findAny().isPresent();
+    }
+
+
+    public static void populateSieve(){
+            prime_sieve[1]=1;
+
+            for(int i=2; i<101; i++){
+                int k=i+i;
+                while(k<101){
+                    prime_sieve[k]=1;
+                    k+=i;
+                }
+            }
+    }
+
+    public static boolean isPrime(int number) {
+        return prime_sieve[number] ==0;
+    }
+}
